@@ -119,21 +119,23 @@ function Player(name, health, strength, speed){
     return maxHealth;
   }
 
+ /*
   function _takeItem(item) {
     thePack = _getPack();
     if(thePack.length >= 3) {
       return false;
     }
-
   }
+  */
 
 //external methods
+/*
 return {
   getPack: _getPack,
   getMaxHealth: _getMaxHealth,
   takeItem: _takeItem
 };
-
+*/
 //end of Player function
 }
 
