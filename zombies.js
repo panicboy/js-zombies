@@ -152,7 +152,25 @@ function Player(name, health, strength, speed){
     var discardedItem = pack.splice(itemIndex, 1);
     console.log('player ' + name + ' discarded ' + discardedItem.name);
     return true;
-  }
+  };
+
+  Player.prototype.equip = function(itemToEquip) {
+    console.log('equip called. Item: ' + itemToEquip.name);
+    if(itemToEquip instanceof Weapon) {
+      var itemIndex = pack.indexOf(itemToEquip);
+      if(itemIndex >= 0) {
+        console.log(itemToEquip.name + ' found in pack at [' + itemIndex + '] and will be equipped.');
+        if(this.equipped !== false) {
+          console.log('player is equipped with ' + this.equipped.name);
+          //stow equipped item
+          pack.push(this.equipped);
+        }
+        this.equipped = itemToEquip;
+        //remove the equipped item from pack
+        pack.splice(itemIndex, 1);
+      }
+    }
+  };
 
 // end of Player function
 }
@@ -237,29 +255,7 @@ function Player(name, health, strength, speed){
  * @name equip
  * @param {Weapon} itemToEquip  The weapon item to equip.
  */
- function _equip(itemToEquip) {
-  if(itemToEquip instanceof Weapon) {
-    //find the item's index in the pack
-    var itemIndex = this.pack.indexOf(itemToEquip);
-    if(itemIndex >= 0) {
-      if(this.equipped === null) {
-        //remove item from pack
-        this.equipped = this.pack.splice(itemIndex, 1);
-        console.log(theWeapon.name + ' removed from pack and equipped');
-      } else {
-        //grab the old weapon
-        var oldWeapon = this.equipped;
-        //equip the new weapon
-        this.equipped = this.pack.splice(itemIndex, 1);
-        console.log(this.equipped.name + ' equipped');
-        this.pack.push(oldWeapon);
-        console.log(oldWeapon.name + ' placed into pack');
-      }
-    return true;
-    }
-  }
-  return false;
- }
+
 
  /**
  * Player Class Method => eat(itemToEat)
