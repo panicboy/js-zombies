@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Class => Item(name)
  * -----------------------------
@@ -108,50 +110,18 @@ function Player(name, health, strength, speed){
   this.health = health;
   this.strength = strength;
   this.speed = speed;
-  var pack = [];
-  var maxHealth = health;
+  this.pack = [];
+  this.maxHealth = health;
+  this.isAlive = true;
+  this.equipped = false;
 
   function _getPack(){
-    return pack;
+    return this.pack;
   }
 
   function _getMaxHealth() {
-    return maxHealth;
+    return this.maxHealth;
   }
-
- /*
-  function _takeItem(item) {
-    thePack = _getPack();
-    if(thePack.length >= 3) {
-      return false;
-    }
-  }
-  */
-
-//external methods
-/*
-return {
-  getPack: _getPack,
-  getMaxHealth: _getMaxHealth,
-  takeItem: _takeItem
-};
-*/
-//end of Player function
-}
-
-
-/**
- * Player Class Method => checkPack()
- * -----------------------------
- * Player checks the contents of their pack.
- *
- * Nicely format and print the items in the player's pack.
- * To access the pack, be sure to use Player's getPack method.
- * You should be able to invoke this function on a Player instance.
- *
- * @name checkPack
- */
-
 
 /**
  * Player Class Method => takeItem(item)
@@ -171,8 +141,43 @@ return {
  * @return {boolean} true/false     Whether player was able to store item in pack.
  */
 
+  function _takeItem(item) {
+    //is the pack full?
+    if(this.pack.length < 3) {
+      //is the item really an item?
+      if(this.isItem(item)) {
+        console.log('player: ' + this.name + '; item added: ' + item.name);
+        this.pack.push(item);
+        return true;
+      }
+    }
+    console.log('player: ' + this.name + '; item not added: ' + item.name);
+    return false;
+  }
 
 /**
+ * Player Class Method => checkPack()
+ * -----------------------------
+ * Player checks the contents of their pack.
+ *
+ * Nicely format and print the items in the player's pack.
+ * To access the pack, be sure to use Player's getPack method.
+ * You should be able to invoke this function on a Player instance.
+ *
+ * @name checkPack
+ */
+  function _checkPack(){
+    var thePack = this._getPack();
+    var items = "items in pack: "
+    for (var i = 0 ; i >= thePack.length - 1; i++) {
+      items += thePack[i].name + ', ';
+    }
+    var itemList = items.slice(0,-2);
+    console.log(itemsList);
+    return itemsList;
+  }
+
+  /**
  * Player Class Method => discardItem(item)
  * -----------------------------
  * Player discards an item from their pack.
@@ -198,8 +203,18 @@ return {
  * @return {boolean} true/false     Whether player was able to remove item from pack.
  */
 
+  function _discardItem(item){
+    var itemIndex = this.pack.indexOf(item);
+    if(itemIndex < 0) {
+      console.log('Nothing was discarded because ' + item.name + ' could not be found.');
+      return false;
+    }
+    var discardedItem = this.pack.splice(itemIndex, 1);
+    console.log('player ' + this.name + ' discarded ' + discardedItem.name);
+    return true;
+  }
 
-/**
+  /**
  * Player Class Method => equip(itemToEquip)
  * -----------------------------
  * Player equips a weapon item.
@@ -218,9 +233,31 @@ return {
  * @name equip
  * @param {Weapon} itemToEquip  The weapon item to equip.
  */
+ function _equip(itemToEquip) {
+  if(itemToEquip instanceof Weapon) {
+    //find the item's index in the pack
+    var itemIndex = this.pack.indexOf(itemToEquip);
+    if(itemIndex >= 0) {
+      if(this.equipped === null) {
+        //remove item from pack
+        this.equipped = this.pack.splice(itemIndex, 1);
+        console.log(theWeapon.name + ' removed from pack and equipped');
+      } else {
+        //grab the old weapon
+        var oldWeapon = this.equipped;
+        //equip the new weapon
+        this.equipped = this.pack.splice(itemIndex, 1);
+        console.log(this.equipped.name + ' equipped');
+        this.pack.push(oldWeapon);
+        console.log(oldWeapon.name + ' placed into pack');
+      }
+    return true;
+    }
+  }
+  return false;
+ }
 
-
-/**
+ /**
  * Player Class Method => eat(itemToEat)
  * -----------------------------
  * Player eats a food item, restoring their health.
@@ -239,8 +276,36 @@ return {
  * @param {Food} itemToEat  The food item to eat.
  */
 
+ function _eat(itemToEat){
+  if(itemToEat instanceof Food) {
+    //find the item's index in the pack
+    var itemIndex = this.pack.indexOf(itemToEat);
+    if(itemIndex >= 0) {
+      myMeal = this.pack.splice(itemIndex, 1);
+      if(meal.energy + this.health > this._getMaxHealth()) {
+        this.health = this.maxHealth;
+      }
+    }
+ }
+}
 
 /**
+ * Player Class Method => equippedWith()
+ * -----------------------------
+ * Player checks their equipment.
+ *
+ * Prints the player's name and equipped weapon's name.
+ * If nothing is equipped, prints a message saying so.
+ * Also returns the equipped weapon's name or false if nothing is equipped.
+ * You should be able to invoke this function on a Player instance.
+ *
+ * @name equippedWith
+ * @return {string/boolean}   Weapon name or false if nothing is equipped.
+ */
+
+
+
+ /**
  * Player Class Method => useItem(item)
  * -----------------------------
  * Player uses an item from the pack.
@@ -252,6 +317,33 @@ return {
  * @name useItem
  * @param {Item/Weapon/Food} item   The item to use.
  */
+
+function _useItem(item) {
+  if(item instanceof Food) {
+    this._eat(item);
+  }
+  if(item instanceof Weapon) {
+    this._eeuip(item);
+  }
+}
+
+
+//external methods
+
+return {
+  getPack: _getPack,
+  getMaxHealth: _getMaxHealth,
+  takeItem: _takeItem,
+  checkPack: _checkPack,
+  discardItem: _discardItem,
+  equip: _equip,
+  eat: _eat,
+  useItem: _useItem
+};
+
+//end of Player function
+}
+
 
 
 /**
