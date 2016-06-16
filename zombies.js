@@ -115,13 +115,46 @@ function Player(name, health, strength, speed){
   this.isAlive = true;
   this.equipped = false;
 
-  function getPack(){
+  Player.prototype.getPack = function() {
     return pack;
+  };
+
+  Player.prototype.getMaxHealth = function() {
+    return maxHealth;
+  };
+
+  Player.prototype.takeItem = function(item) {
+    //is the pack full?
+    if(pack.length === 3) {
+      //is the pack full?
+      console.log('player: ' + this.name + '; item not added: ' + item.name);
+      return false;
+    }
+    //is the item really an item?
+    if(item instanceof Item) {
+      console.log('player: ' + this.name + '; item added: ' + item.name);
+      pack.push(item);
+      return true;
+    }
+  };
+
+  Player.prototype.checkPack = function (){
+    var thePack = this.getPack();
+    console.log(thePack);
+  };
+
+  Player.prototype.discardItem = function(item){
+    var itemIndex = pack.indexOf(item);
+    if(itemIndex < 0) {
+      console.log('Nothing was discarded because ' + item.name + ' could not be found.');
+      return false;
+    }
+    var discardedItem = pack.splice(itemIndex, 1);
+    console.log('player ' + name + ' discarded ' + discardedItem.name);
+    return true;
   }
 
-  function getMaxHealth() {
-    return maxHealth;
-  }
+// end of Player function
 }
 
 /**
@@ -142,20 +175,7 @@ function Player(name, health, strength, speed){
  * @return {boolean} true/false     Whether player was able to store item in pack.
  */
 
-Player.prototype.takeItem = function(item) {
-    //is the pack full?
-    var thePack = getPack();
-    if(thePack.length < 3) {
-      //is the item really an item?
-      if(item instanceof Item) {
-        console.log('player: ' + this.name + '; item added: ' + item.name);
-        thePack.push(item);
-        return true;
-      }
-    }
-    console.log('player: ' + this.name + '; item not added: ' + item.name);
-    return false;
-  };
+
 
 /**
  * Player Class Method => checkPack()
@@ -168,16 +188,7 @@ Player.prototype.takeItem = function(item) {
  *
  * @name checkPack
  */
-  function _checkPack(){
-    var thePack = this._getPack();
-    var items = "items in pack: "
-    for (var i = 0 ; i >= thePack.length - 1; i++) {
-      items += thePack[i].name + ', ';
-    }
-    var itemList = items.slice(0,-2);
-    console.log(itemsList);
-    return itemsList;
-  }
+
 
   /**
  * Player Class Method => discardItem(item)
@@ -205,16 +216,7 @@ Player.prototype.takeItem = function(item) {
  * @return {boolean} true/false     Whether player was able to remove item from pack.
  */
 
-  function _discardItem(item){
-    var itemIndex = this.pack.indexOf(item);
-    if(itemIndex < 0) {
-      console.log('Nothing was discarded because ' + item.name + ' could not be found.');
-      return false;
-    }
-    var discardedItem = this.pack.splice(itemIndex, 1);
-    console.log('player ' + this.name + ' discarded ' + discardedItem.name);
-    return true;
-  }
+
 
   /**
  * Player Class Method => equip(itemToEquip)
