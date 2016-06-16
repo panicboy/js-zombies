@@ -110,18 +110,19 @@ function Player(name, health, strength, speed){
   this.health = health;
   this.strength = strength;
   this.speed = speed;
-  this.pack = [];
-  this.maxHealth = health;
+  var pack = [];
+  var maxHealth = health;
   this.isAlive = true;
   this.equipped = false;
 
-  function _getPack(){
-    return this.pack;
+  function getPack(){
+    return pack;
   }
 
-  function _getMaxHealth() {
-    return this.maxHealth;
+  function getMaxHealth() {
+    return maxHealth;
   }
+}
 
 /**
  * Player Class Method => takeItem(item)
@@ -141,19 +142,20 @@ function Player(name, health, strength, speed){
  * @return {boolean} true/false     Whether player was able to store item in pack.
  */
 
-  function _takeItem(item) {
+Player.prototype.takeItem = function(item) {
     //is the pack full?
-    if(this.pack.length < 3) {
+    var thePack = getPack();
+    if(thePack.length < 3) {
       //is the item really an item?
-      if(this.isItem(item)) {
+      if(item instanceof Item) {
         console.log('player: ' + this.name + '; item added: ' + item.name);
-        this.pack.push(item);
+        thePack.push(item);
         return true;
       }
     }
     console.log('player: ' + this.name + '; item not added: ' + item.name);
     return false;
-  }
+  };
 
 /**
  * Player Class Method => checkPack()
@@ -303,7 +305,14 @@ function Player(name, health, strength, speed){
  * @return {string/boolean}   Weapon name or false if nothing is equipped.
  */
 
-
+function _equippedWith() {
+  if(this.equipped = false) {
+    console.log('nothing equipped!');
+    return false;
+  }
+  console.log('player: ' + this.name + ' equipped with ' + this.equipped.name);
+  return this.equipped.name;
+}
 
  /**
  * Player Class Method => useItem(item)
@@ -329,20 +338,6 @@ function _useItem(item) {
 
 
 //external methods
-
-return {
-  getPack: _getPack,
-  getMaxHealth: _getMaxHealth,
-  takeItem: _takeItem,
-  checkPack: _checkPack,
-  discardItem: _discardItem,
-  equip: _equip,
-  eat: _eat,
-  useItem: _useItem
-};
-
-//end of Player function
-}
 
 
 
